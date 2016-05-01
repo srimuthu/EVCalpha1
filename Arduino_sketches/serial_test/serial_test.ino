@@ -13,6 +13,7 @@ void loop(){
 }
 
 void blink(int numberOfTimes){
+  //function for blinking the led
   for (int i = 0; i < numberOfTimes; i++)  {
     digitalWrite(ledPin, HIGH);
     delay(100);
