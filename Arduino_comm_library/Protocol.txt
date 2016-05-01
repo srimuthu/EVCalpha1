@@ -1,0 +1,33 @@
+################################################################
+				PROTOCOL DOCUMENT FOR EVCalpha1
+################################################################
+
+
+##-MESSAGE LENGTH-##
+
+	5 bytes
+
+##-MESSAGE FORMAT-##
+
+	C|a|a|a|a
+
+	C 	-> Command
+	a 	-> argument (arg)
+
+##-Simple Protocol Definition-##
+
+//Commands
+#define BLINK_LED	0x01;
+
+
+//Internal command
+#define NO_PENDING	0xFE;
+
+
+
+##-COMMANDS AND FORMATS-##
+command 	= BLINK_LED
+	arg1	= num times
+	arg2	= delay time
+	arg3	= 0x00
+	arg4	= 0x00
