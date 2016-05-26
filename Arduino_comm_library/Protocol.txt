@@ -1,7 +1,7 @@
 ################################################################
 				PROTOCOL DOCUMENT FOR EVCalpha1
 ################################################################
-## Group-08 ##
+## Group-08 Embedded Visual control ##
 
 ##-MESSAGE LENGTH-##
 

@@ -64,6 +64,6 @@ class ArduinoComm():
 if __name__ == '__main__':
 
     comm = ArduinoComm("COM5",9600)
-    comm.SendMessage("BLINK_LED",[25,250,0,0])
+    comm.SendMessage("BLINK_LED",[5,250,0,0])
     comm.Terminate()
 
