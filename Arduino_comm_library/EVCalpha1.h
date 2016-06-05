@@ -23,15 +23,28 @@ Make sure that the class EVCalpha1 is instantiated only once
 
 //Commands
 #define BLINK_LED	0x01
-
-//TO BE IMPLEMENTED
-/*
 #define FORWARD 	0x02
 #define REVERSE 	0x03
-*/
+#define STOP		0x04
+#define ARC_TURN	0x05
+
+
 
 //Internal command
 #define NO_PENDING	0xFE
+
+//Motor Setup
+#define PWM_L 9
+#define PWM_R 5
+
+#define EN_L_BWD 8
+#define EN_L_FWD 4
+
+#define EN_R_BWD 6
+#define EN_R_FWD 7
+
+#define CURRENT_CHARGE 0
+#define CURRENT_LOAD 1
 
 class EVCalpha1
 {
@@ -57,25 +70,34 @@ class EVCalpha1
 
 		//Privates
 		int _baud;
-/*		int _motor1_pin;
-		int _motor2_pin;*/
 		int _led_pin;
 		int _msg[MSG_SIZE];
 		
 		//Core private functions
+		
 		void doAction();
-		void commandLed();
+		
+		void setMotor(const unsigned char cucPWM, const unsigned char cucFWD , const unsigned char cucBWD, const int ciSpeed);
 
-		//TO BE IMPLEMENTED
-/*		void commandForward();
+		void commandLed();
+		void commandForward();
 		void commandReverse();
+		void commandStop();
+		void commandArcTurn();
+
+
+/*		
+		
 		void commandSpotLeft();
 		void commandSpotRight();
-		void commandArcLeft();
-		void commandArcRight();*/
+		*/
 
 		//Private actions
 		void blinkLed(int times, int delay);
+		void forward(int pwm, int delay);
+		void reverse(int pwm, int delay);
+		void stop();
+		void arcTurn(int left_pwm, int right_pwm, int delay);
 
 };
 

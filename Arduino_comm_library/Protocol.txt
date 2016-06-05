@@ -17,7 +17,13 @@
 ##-Simple Protocol Definition-##
 
 //Commands
-#define BLINK_LED	0x01;
+#define BLINK_LED	0x01
+#define FORWARD 	0x02
+#define REVERSE 	0x03
+#define STOP		0x04
+#define ARC_TURN	0x05
+
+
 
 
 //Internal command
@@ -31,3 +37,23 @@ command 	= BLINK_LED
 	arg2	= delay time
 	arg3	= 0x00
 	arg4	= 0x00
+
+command 	= FORWARD
+	arg1	= speed (pwm)
+	arg2	= delay (0 to 255)
+	arg3	= delay multipler (arg3*arg2 = final delay)
+	arg4	= 0x00
+
+command 	= REVERSE
+	arg1	= speed (pwm)
+	arg2	= delay (0 to 255)
+	arg3	= delay multipler (arg3*arg2 = final delay)
+	arg4	= 0x00
+
+command 	= ARC_TURN
+	arg1	= speed left (pwm)
+	arg2	= speed right (pwm)
+	arg3	= delay (0 to 255)
+	arg4	= delay multipler (arg3*arg2 = final delay)
+
+
