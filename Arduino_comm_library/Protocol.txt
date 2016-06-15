@@ -21,8 +21,10 @@
 #define FORWARD 	0x02
 #define REVERSE 	0x03
 #define STOP		0x04
-#define ARC_TURN	0x05
-
+#define ARC_LEFT	0x05
+#define ARC_RIGHT	0x06
+#define PAN_SERVO	0x07
+#define TILT_SERVO	0x08
 
 
 
@@ -50,10 +52,26 @@ command 	= REVERSE
 	arg3	= delay multipler (arg3*arg2 = final delay)
 	arg4	= 0x00
 
-command 	= ARC_TURN
-	arg1	= speed left (pwm)
+command 	= ARC_LEFT
+	arg1	= speed left (pwm) (internally multiiplied by -1 to rotate in opposite dir)
 	arg2	= speed right (pwm)
 	arg3	= delay (0 to 255)
 	arg4	= delay multipler (arg3*arg2 = final delay)
 
+command 	= ARC_RIGHT
+	arg1	= speed left (pwm) 
+	arg2	= speed right (pwm) (internally multiiplied by -1 to rotate in opposite dir)
+	arg3	= delay (0 to 255)
+	arg4	= delay multipler (arg3*arg2 = final delay)
 
+command 	= PAN_SERVO
+	arg1	= angle (0 to 180)
+	arg2	= 0x00
+	arg3	= 0x00
+	arg4	= 0x00
+
+command 	= TILT_SERVO
+	arg1	= angle (0 to 180)
+	arg2	= 0x00
+	arg3	= 0x00
+	arg4	= 0x00

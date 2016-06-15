@@ -29,9 +29,13 @@ from Error import *
 DEBUG = True
 font = cv2.FONT_HERSHEY_SIMPLEX
 
-c_frameWidth = 640
-c_frameHeight = 480
-c_gaussianBlurTuple = (5,5)
+c_frameWidth = 800
+c_frameHeight = 600
+c_gaussianBlurTuple = (3,3)
+
+c_leftTemplate = "templates/l_template.jpg"
+c_rightTemplate = "templates/r_template.jpg"
+c_straightTemplate = "templates/s_template.jpg"
 
 #video
 c_redLower = np.array([170,96,181])
@@ -42,17 +46,6 @@ c_yellowLower = np.array([14,108,173])
 c_yellowUpper = np.array([21,255,255])
 c_whiteLower = np.array([0,0,210])
 c_whiteUpper = np.array([170,25,255])
-
-#cam feed
-##c_redLower = np.array([170,90,140])
-##c_redUpper = np.array([180,255,255])
-##c_blueLower = np.array([90,100,100])
-##c_blueUpper = np.array([130,255,255])
-##c_yellowLower = np.array([14,108,173])
-##c_yellowUpper = np.array([21,255,255])
-##c_whiteLower = np.array([0,0,210])
-##c_whiteUpper = np.array([170,25,255])
-
 
 c_signWhiteRatio = 0.55
 
@@ -81,23 +74,43 @@ class TrafficSign():
         self.__GetTemplates()
 
     def __GetTemplates(self):
-        self.__l_temp = cv2.imread("l_template.jpg")
+        self.__l_temp = cv2.imread(c_leftTemplate)
         self.__l_temp = cv2.cvtColor(self.__l_temp, cv2.COLOR_BGR2HSV)
-        self.__r_temp = cv2.imread("r_template.jpg")
+        self.__r_temp = cv2.imread(c_rightTemplate)
         self.__r_temp = cv2.cvtColor(self.__r_temp, cv2.COLOR_BGR2HSV)
-        self.__s_temp = cv2.imread("s_template.jpg")
+        self.__s_temp = cv2.imread(c_straightTemplate)
         self.__s_temp = cv2.cvtColor(self.__s_temp, cv2.COLOR_BGR2HSV)
 
+    def __RescaleImage(self):
+        self.__imgOrig = cv2.resize(self.__imgOrig,(c_frameWidth,c_frameHeight),interpolation = cv2.INTER_LINEAR)
+        self.__size_x = self.__imgOrig.shape[1]
+        self.__size_y = self.__imgOrig.shape[0]
+        self.__ROI_w = self.__size_x
+        self.__ROI_h = 2*self.__size_y/3
+        self.__ROI_x = 0
+        #self.__ROI_y = self.__size_y - self.__ROI_h
+        self.__ROI_y = 0
+
+    def __CropRoi(self):
+
+        #self.__imgGray = cv2.cvtColor(self.__imgOrig,cv2.COLOR_BGR2GRAY)
+        #self.__imgHist = cv2.equalizeHist(self.__imgGray)
+        self.__imgOrig = self.__imgOrig[self.__ROI_y:self.__ROI_y+self.__ROI_h,
+                                        self.__ROI_x:self.__ROI_x+self.__ROI_w]
+
+        self.__img = cv2.GaussianBlur(self.__imgOrig,c_gaussianBlurTuple,0)
+
     def __SplitColors(self):
-        self.__img = cv2.medianBlur(self.__imgOrig,3)
-        #self.__kernel = np.ones((3,3),np.uint8)
+        #self.__img = cv2.medianBlur(self.__imgOrig,3)
+##        self.__img = cv2.GaussianBlur(self.__imgOrig,(5,5),0)
+##        self.__kernel = np.ones((3,3),np.uint8)
         self.__hsv = cv2.cvtColor(self.__img, cv2.COLOR_BGR2HSV)
         self.__red = cv2.inRange(self.__hsv, c_redLower, c_redUpper)
-        #self.__red = cv2.erode(self.__red, self.__kernel)
+##        self.__red = cv2.erode(self.__red, self.__kernel)
         self.__blue = cv2.inRange(self.__hsv, c_blueLower, c_blueUpper)
-        #self.__blue = cv2.erode(self.__blue, self.__kernel)
+##        self.__blue = cv2.erode(self.__blue, self.__kernel)
         self.__yellow = cv2.inRange(self.__hsv, c_yellowLower, c_yellowUpper)
-        #self.__yellow = cv2.erode(self.__yellow, self.__kernel)
+##        self.__yellow = cv2.erode(self.__yellow, self.__kernel)
 ##        cv2.imshow("red",self.__red)
 ##        cv2.imshow("blue",self.__blue)
 ##        cv2.imshow("yellow",self.__yellow)
@@ -196,9 +209,9 @@ class TrafficSign():
         elif white_pix[2]>white_pix[0] and white_pix[2]>white_pix[1]:
             cv2.putText(self.__img,'straight',(x,y), font, 1,(255,255,255),2)
 ##        cv2.imshow("temp_blue",temp_blue)
-##        cv2.imshow("temp_l",l_and)
-##        cv2.imshow("temp_r",r_and)
-##        cv2.imshow("temp_s",s_and)
+        cv2.imshow("temp_l",l_and)
+        cv2.imshow("temp_r",r_and)
+        cv2.imshow("temp_s",s_and)
 
 
     def __FindTurnSign(self):
@@ -211,7 +224,6 @@ class TrafficSign():
                     if p!=0:
                         T = 4*np.pi*(area/(p*p))
                         if T > c_circleDetectionLower and T < c_circleDetectionUpper:
-                            #print "test1 passed"
                             self.__BlueKernel(x,y,w,h)
                         else:
                             if (self.__SecondaryTurnTest(x,y,w,h,)):
@@ -219,6 +231,8 @@ class TrafficSign():
 
     def DetectSign(self, img_orig):
         self.__imgOrig = img_orig
+        self.__RescaleImage()
+        self.__CropRoi()
         self.__SplitColors()
         self.__IdentifyContours()
         self.__FindStopSign()
@@ -228,7 +242,7 @@ class TrafficSign():
 
 if __name__ == '__main__':
 
-    cap = cv2.VideoCapture("video2_conv.avi")
+    cap = cv2.VideoCapture("video2.h264")
     print "video capture opening :",cap.isOpened()
     signObj = TrafficSign()
     while(cap.isOpened()):

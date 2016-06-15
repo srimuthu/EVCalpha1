@@ -14,9 +14,16 @@ import serial
 from Error import *
 
 msgLen  = 5
-serPort = "COM5"
+serPort = "/dev/ttyUSB0"
 cmdDict = {"NO_PENDING":0xfe,
-            "BLINK_LED":0x01}
+            "BLINK_LED":0x01,
+            "FORWARD":0x02,
+            "REVERSE":0x03,
+            "STOP":0x04,
+            "ARC_LEFT":0x05,
+           "ARC_RIGHT":0x06,
+           "PAN_SERVO":0x07,
+           "TILT_SERVO":0x08}
 
 class ArduinoComm():
     def __init__(self, port=serPort, baud=9600):
@@ -63,7 +70,16 @@ class ArduinoComm():
 #testing purposes
 if __name__ == '__main__':
 
-    comm = ArduinoComm("COM5",9600)
-    comm.SendMessage("BLINK_LED",[5,250,0,0])
+    comm = ArduinoComm("/dev/ttyUSB0",9600)
+    #comm.SendMessage("BLINK_LED",[25,250,0,0])
+    #time.sleep(10)
+    comm.SendMessage("REVERSE",[210,100,1,0])
+    time.sleep(10)
+    comm.SendMessage("STOP",[0,0,0,0])
+    time.sleep(5)
+    comm.SendMessage("FORWARD",[210,100,1,0])
+    time.sleep(10)
+    comm.SendMessage("STOP",[0,0,0,0])
+    time.sleep(5)
     comm.Terminate()
 

@@ -19,15 +19,18 @@ Make sure that the class EVCalpha1 is instantiated only once
 
 //Common defines
 #define MSG_SIZE	5
-
+#define MAX_SERVO_ANGLE	180
+#define SERVO_LOOP	30
 
 //Commands
 #define BLINK_LED	0x01
 #define FORWARD 	0x02
 #define REVERSE 	0x03
 #define STOP		0x04
-#define ARC_TURN	0x05
-
+#define ARC_LEFT	0x05
+#define ARC_RIGHT	0x06
+#define PAN_SERVO	0x07
+#define TILT_SERVO	0x08
 
 
 //Internal command
@@ -46,6 +49,11 @@ Make sure that the class EVCalpha1 is instantiated only once
 #define CURRENT_CHARGE 0
 #define CURRENT_LOAD 1
 
+#define PAN		12
+#define TILT	13
+
+
+
 class EVCalpha1
 {
 	public:
@@ -55,12 +63,6 @@ class EVCalpha1
 		//Initialization functions
 
 		void setLed(int led_pin);
-
-		//TO BE IMPLEMENTED
-/*		void setMotor1(int motor1_pin);
-		void setMotor2(int motor2_pin);*/
-		
-
 
 		//Core public functions
 		void readIncomingMessage(void);
@@ -72,7 +74,11 @@ class EVCalpha1
 		int _baud;
 		int _led_pin;
 		int _msg[MSG_SIZE];
-		
+
+		int _servo_default;
+		int _lenMicroSecondsOfPeriod = 25 * 1000; // 25 milliseconds (ms)
+		float _servo_lut[4] = {0.0,0.7,180.0,2.2};
+
 		//Core private functions
 		
 		void doAction();
@@ -83,7 +89,11 @@ class EVCalpha1
 		void commandForward();
 		void commandReverse();
 		void commandStop();
-		void commandArcTurn();
+		void commandArcLeft();
+		void commandArcRight();
+		void commandPan();
+		void commandTilt();
+
 
 
 /*		
@@ -93,11 +103,17 @@ class EVCalpha1
 		*/
 
 		//Private actions
+		int interpolate(int val);
+
 		void blinkLed(int times, int delay);
 		void forward(int pwm, int delay);
 		void reverse(int pwm, int delay);
 		void stop();
-		void arcTurn(int left_pwm, int right_pwm, int delay);
+		void arcLeft(int left_pwm, int right_pwm, int delay);
+		void arcRight(int left_pwm, int right_pwm, int delay);
+		void pan(int value);
+		void tilt(int value);
+
 
 };
 
