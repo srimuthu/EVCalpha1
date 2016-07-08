@@ -42,27 +42,27 @@ command 	= BLINK_LED
 
 command 	= FORWARD
 	arg1	= speed (pwm)
-	arg2	= delay (0 to 255)
-	arg3	= delay multipler (arg3*arg2 = final delay)
+	arg2	= dist (in cm) (0 to 255)
+	arg3	= 0x00
 	arg4	= 0x00
 
 command 	= REVERSE
 	arg1	= speed (pwm)
-	arg2	= delay (0 to 255)
-	arg3	= delay multipler (arg3*arg2 = final delay)
+	arg2	= dist (in cm) (0 to 255)
+	arg3	= 0x00
 	arg4	= 0x00
 
 command 	= ARC_LEFT
-	arg1	= speed left (pwm) (internally multiiplied by -1 to rotate in opposite dir)
-	arg2	= speed right (pwm)
-	arg3	= delay (0 to 255)
-	arg4	= delay multipler (arg3*arg2 = final delay)
+	arg1	= speed pwm 
+	arg2	= angle (0 to 255)
+	arg3	= 0x00
+	arg4	= 0x00
 
 command 	= ARC_RIGHT
-	arg1	= speed left (pwm) 
-	arg2	= speed right (pwm) (internally multiiplied by -1 to rotate in opposite dir)
-	arg3	= delay (0 to 255)
-	arg4	= delay multipler (arg3*arg2 = final delay)
+	arg1	= speed pwm
+	arg2	= angle (0 to 255)
+	arg3	= 0x00
+	arg4	= 0x00
 
 command 	= PAN_SERVO
 	arg1	= angle (0 to 180)

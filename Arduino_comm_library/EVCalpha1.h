@@ -21,7 +21,12 @@ Make sure that the class EVCalpha1 is instantiated only once
 #define MSG_SIZE	5
 #define MAX_SERVO_ANGLE	180
 #define SERVO_LOOP	30
+#define DIST_UNIT_CM	37.5
 
+#define LA 	0.0319
+#define LB 	10.6806
+#define RA 	0.0347
+#define RB 	9.6528
 //Commands
 #define BLINK_LED	0x01
 #define FORWARD 	0x02
@@ -52,7 +57,11 @@ Make sure that the class EVCalpha1 is instantiated only once
 #define PAN		12
 #define TILT	13
 
+#define RH_ENCODER_B 3
+#define LH_ENCODER_A 2
 
+void leftEncoderEvent();
+void rightEncoderEvent();
 
 class EVCalpha1
 {
@@ -106,11 +115,11 @@ class EVCalpha1
 		int interpolate(int val);
 
 		void blinkLed(int times, int delay);
-		void forward(int pwm, int delay);
-		void reverse(int pwm, int delay);
+		void forward(int pwm, int dist);
+		void reverse(int pwm, int dist);
 		void stop();
-		void arcLeft(int left_pwm, int right_pwm, int delay);
-		void arcRight(int left_pwm, int right_pwm, int delay);
+		void arcLeft(int pwm, int steps);
+		void arcRight(int pwm, int steps);
 		void pan(int value);
 		void tilt(int value);
 
