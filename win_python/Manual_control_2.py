@@ -2,7 +2,7 @@ import getch
 import sys
 import ArduinoComm
 
-comm = ArduinoComm.ArduinoComm("COM4")
+comm = ArduinoComm.ArduinoComm("COM3")
 l_pwm = 0
 r_pwm = 0
 step = 3
@@ -12,6 +12,7 @@ tilt_init = 90
 pan = 90
 tilt = 90
 while True:
+    comm.ReceiveMessage()
     pressedKey = getch.getch()
     if pressedKey == 'w':
        print "w"

@@ -17,8 +17,8 @@ from Error import *
 
 font = cv2.FONT_HERSHEY_SIMPLEX
 
-c_frameWidth = 640
-c_frameHeight = 480
+c_frameWidth = 800
+c_frameHeight = 600
 c_gaussianBlurTuple = (3,3)
 
 CANNY_MIN_TRESHOLD = 300
@@ -39,25 +39,36 @@ class LaneDetect():
         self.__size_x = self.__imgOrig.shape[1]
         self.__size_y = self.__imgOrig.shape[0]
         self.__ROI_w = self.__size_x
-        self.__ROI_h = self.__size_y/2
+        self.__ROI_h = self.__size_y
         self.__ROI_x = 0
         self.__ROI_y = self.__size_y - self.__ROI_h
 
     def __CropRoi(self):
 
-        self.__imgGray = cv2.cvtColor(self.__imgOrig,cv2.COLOR_BGR2GRAY)
-        self.__imgHist = cv2.equalizeHist(self.__imgGray)
-        self.__imgRoi = self.__imgHist[self.__ROI_y:self.__ROI_y+self.__ROI_h,
+        self.__imgGray = cv2.GaussianBlur(self.__imgOrig,c_gaussianBlurTuple,0)
+        self.__imgGray = cv2.cvtColor(self.__imgGray,cv2.COLOR_BGR2GRAY)
+        #self.__imgHist = cv2.equalizeHist(self.__imgGray)
+
+        self.__imgRoi = self.__imgGray[self.__ROI_y:self.__ROI_y+self.__ROI_h,
                                         self.__ROI_x:self.__ROI_x+self.__ROI_w]
 
-        self.__imgRoi = cv2.GaussianBlur(self.__imgRoi,c_gaussianBlurTuple,0)
+
 
     def __DetectLines(self):
 
         self.__imgEdge = cv2.Canny(self.__imgRoi,CANNY_MIN_TRESHOLD,CANNY_MAX_TRESHOLD)
-        self.__lines = cv2.HoughLines(self.__imgEdge,1,np.pi/180,100)
-
+        self.__lines = cv2.HoughLines(self.__imgEdge,1,np.pi/180,60)
+        cv2.imshow("edges",self.__imgEdge)
+##        if self.__lines is not None:
+##            for items in self.__lines:
+##                print items
     def __PrintLines(self):
+        if self.__lines is None:
+            return
+##        print "len ",len(self.__lines)
+##        print "len0",len(self.__lines[0])
+##        #print "len2",len(self.__lines[1])
+        print self.__lines.shape
         try:
             for rho,theta in self.__lines[0]:
                 a = np.cos(theta)
@@ -68,9 +79,9 @@ class LaneDetect():
                 y1 = int(y0 + 1000*(a))
                 x2 = int(x0 - 1000*(-b))
                 y2 = int(y0 - 1000*(a))
-                print theta
+                #print theta
 
-            cv2.line(self.__imgRoi,(x1,y1),(x2,y2),(0,0,255),2)
+                cv2.line(self.__imgRoi,(x1,y1),(x2,y2),(0,0,255),2)
         except:
             pass
 
@@ -85,11 +96,11 @@ class LaneDetect():
 
 if __name__ == '__main__':
 
-    cap = cv2.VideoCapture("video_new.h264")
+    cap = cv2.VideoCapture("petar6.h264")
     print "video capture opening :",cap.isOpened()
     laneObj = LaneDetect()
     while(cap.isOpened()):
-        time.sleep(0.05)
+        #time.sleep(0.05)
         ret, img_orig = cap.read()
         laneObj.DetectLane(img_orig)
         if cv2.waitKey(1) & 0xFF == ord('q'):

@@ -66,16 +66,25 @@ c_circleDetectionUpper = 1.15
 
 c_signAreaClassifierThresh = 0.3
 
-#c_knownWidth = 18.5
-#c_focalLength  = 797.838
-c_knownWidth = 14.8
-c_focalLength  = 782.43
+c_knownWidth = 18.5
+c_focalLength  = 797.838
+
+
+c_LEFT = 1
+c_RIGHT = 2
+c_STRAIGHT = 3
 
 
 class TrafficSign():
     def __init__(self):
         self.__InitSuccess = True
+        self.__initVars()
         self.__GetTemplates()
+
+    def __initVars(self):
+        self.__turnsPerIter = []
+        self.__turnToConfirm = []
+        self.__confirmFlag = False
 
     def __GetTemplates(self):
         self.__l_temp = cv2.imread(c_leftTemplate)
@@ -107,14 +116,10 @@ class TrafficSign():
     def __SplitColors(self):
         self.__img = cv2.medianBlur(self.__imgOrig,3)
 ##        self.__img = cv2.GaussianBlur(self.__imgOrig,(5,5),0)
-##        self.__kernel = np.ones((3,3),np.uint8)
         self.__hsv = cv2.cvtColor(self.__img, cv2.COLOR_BGR2HSV)
         self.__red = cv2.inRange(self.__hsv, c_redLower, c_redUpper)
-##        self.__red = cv2.erode(self.__red, self.__kernel)
         self.__blue = cv2.inRange(self.__hsv, c_blueLower, c_blueUpper)
-##        self.__blue = cv2.erode(self.__blue, self.__kernel)
         self.__yellow = cv2.inRange(self.__hsv, c_yellowLower, c_yellowUpper)
-##        self.__yellow = cv2.erode(self.__yellow, self.__kernel)
 ##        cv2.imshow("red",self.__red)
 ##        cv2.imshow("blue",self.__blue)
 ##        cv2.imshow("yellow",self.__yellow)
@@ -189,6 +194,7 @@ class TrafficSign():
         approx_distance = (c_knownWidth*c_focalLength)/w
         dist = "d="+str(("%.2f" % approx_distance))+" cm"
         cv2.putText(self.__img,dist,(x,y+h), font, 1,(255,255,255),2)
+        return approx_distance
 
 
     def __BlueKernel(self, x, y, w, h):
@@ -214,13 +220,16 @@ class TrafficSign():
             else:
                 white_pix[i] = white_pix[i].size
         cv2.rectangle(self.__img,(x,y),(x+w,y+h),(0,255,0),2)
-        self.__EstimateDistanceToSign(x,y,w,h)
+        #self.__EstimateDistanceToSign(x,y,w,h)
         if white_pix[0]>white_pix[1] and white_pix[0]>white_pix[2]:
             cv2.putText(self.__img,'left',(x,y), font, 1,(255,255,255),2)
+            return c_LEFT
         elif white_pix[1]>white_pix[0] and white_pix[1]>white_pix[2]:
             cv2.putText(self.__img,'right',(x,y), font, 1,(255,255,255),2)
+            return c_RIGHT
         elif white_pix[2]>white_pix[0] and white_pix[2]>white_pix[1]:
             cv2.putText(self.__img,'straight',(x,y), font, 1,(255,255,255),2)
+            return c_STRAIGHT
 ##        cv2.imshow("temp_blue",temp_blue)
 ##        cv2.imshow("temp_l",l_and)
 ##        cv2.imshow("temp_r",r_and)
@@ -228,6 +237,7 @@ class TrafficSign():
 
 
     def __FindTurnSign(self):
+        self.__turnsPerIter = []
         if self.__blue_c is not None:
             for cnt in self.__blue_c:
                 area = cv2.contourArea(cnt)
@@ -237,10 +247,43 @@ class TrafficSign():
                     if p!=0:
                         T = 4*np.pi*(area/(p*p))
                         if T > c_circleDetectionLower and T < c_circleDetectionUpper:
-                            self.__BlueKernel(x,y,w,h)
+                            sign = self.__BlueKernel(x,y,w,h)
+                            self.__turnsPerIter.append([sign,self.__EstimateDistanceToSign(x,y,w,h),(x+(w/2),y+(h/2))])
                         else:
                             if (self.__SecondaryTurnTest(x,y,w,h,)):
-                                self.__BlueKernel(x,y,w,h)
+                                sign = self.__BlueKernel(x,y,w,h)
+                                self.__turnsPerIter.append([sign,self.__EstimateDistanceToSign(x,y,w,h),(x+(w/2),y+(h/2))])
+                        print self.__turnsPerIter
+        if len(self.__turnsPerIter) and not self.__confirmFlag:
+            self.__confirmFlag = True
+            self.__ConfirmTurnSign()
+
+
+    def __ConfirmTurnSign(self):
+        self.__FindClosestSign()
+        self.__ComputePanTilt()
+        self.__PointToSign()
+
+
+    def __FindClosestSign(self):
+        distList = []
+        reqIndex = -1
+        for sign in self.__turnsPerIter:
+            distList.append(sign[1])
+        sortedDistList = sorted(distList)
+        for i in range(0,len(self.__turnsPerIter)):
+            if self.__turnsPerIter[i][1] == sortedDistList[0]:
+                reqIndex = i
+        if reqIndex > -1:
+            self.__turnToConfirm = self.__turnsPerIter[reqIndex]
+
+
+
+    def __ComputePanTilt(self):
+        pass
+
+    def __PointToSign(self):
+        pass
 
     def DetectSign(self, img_orig):
         self.__imgOrig = img_orig

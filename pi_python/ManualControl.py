@@ -6,7 +6,7 @@ comm = ArduinoComm.ArduinoComm("/dev/ttyUSB0")
 l_pwm = 0
 r_pwm = 0
 step = 3
-init_val = 230
+init_val = 200
 pan_init = 90
 tilt_init = 90
 pan = 90
@@ -17,7 +17,7 @@ while True:
        print "w"
        l_pwm = init_val
        r_pwm = init_val
-       comm.SendMessage("FORWARD",[l_pwm,r_pwm,1,0])
+       comm.SendMessage("FORWARD",[l_pwm,100,1,0])
        print l_pwm,r_pwm
     elif pressedKey == 'a':
        print "a"
