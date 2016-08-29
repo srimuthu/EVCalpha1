@@ -1,3 +1,13 @@
+#-------------------------------------------------------------------------------
+# Name:        EVC_main.py
+# Purpose:     Main Lane Detection module
+#
+# Author:      Sri Muthu Narayanan Balasubramanian
+#
+# Created:     17-05-2016
+# Copyright:   (c) User 2016
+# Licence:     <your licence>
+#-------------------------------------------------------------------------------
 from __future__ import division
 import time
 import cv2
@@ -6,8 +16,8 @@ from TrafficSignV3 import TrafficSign
 from ArduinoComm import ArduinoComm
 import datetime
 ##Picamera imports
-from picamera.array import PiRGBArray
-from picamera import PiCamera
+# from picamera.array import PiRGBArray
+# from picamera import PiCamera
 
 
 DEBUG = False
@@ -17,13 +27,13 @@ ACTUATION = True
 
 ##PiCamera Initialization goes here
 # initialize the camera and grab a reference to the raw camera capture
-camera = PiCamera()
-camera.resolution = (800, 600)
-camera.framerate = 32
-rawCapture = PiRGBArray(camera, size=(800, 600))
+# camera = PiCamera()
+# camera.resolution = (800, 600)
+# camera.framerate = 32
+# rawCapture = PiRGBArray(camera, size=(800, 600))
 
-# allow the camera to warmup
-time.sleep(0.1)
+# # allow the camera to warmup
+# time.sleep(0.1)
 
 c_loggerFrequency = 10
 
@@ -59,8 +69,8 @@ g_signDatabase = {"STOP":9999,"LEFT":9999,"RIGHT":9999,"STRAIGHT":9999,"UTURN":9
 g_imminentSign = []
 
 
-# cap = cv2.VideoCapture("sat_2_93d.h264")
-# print "video capture opening :", cap.isOpened()
+cap = cv2.VideoCapture("sat_2_93d.h264")
+print "video capture opening :", cap.isOpened()
 
 signObj = TrafficSign()
 laneObj = LaneDetect()
@@ -263,37 +273,37 @@ def SetCameraPosition():
         StabilizationDelay(c_stabilizationTime)
 
 ##Main function for running in windows
-# if __name__ == '__main__':
-#
-#     while(cap.isOpened()):
-#         ret, img_orig = cap.read()
-#         terminate = ControlMain(img_orig)
-#         if(terminate):
-#             TerminateAll()
-#             break
-#         if DEBUG:
-#             cv2.waitKey(0)
-#         if cv2.waitKey(1) & 0xFF == ord('q'):
-#             break
-#     cap.release()
-#     cv2.destroyAllWindows()
-
-##Main function for the DEMO
 if __name__ == '__main__':
 
-    SetCameraPosition()
-    for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-        #time.sleep(0.05)
-        img_orig = frame.array
+    while(cap.isOpened()):
+        ret, img_orig = cap.read()
         terminate = ControlMain(img_orig)
         if(terminate):
+            TerminateAll()
             break
-    key = cv2.waitKey(1) & 0xFF
+        if DEBUG:
+            cv2.waitKey(0)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+    cap.release()
+    cv2.destroyAllWindows()
 
-    # clear the stream in preparation for the next frame
-	rawCapture.truncate(0)
+##Main function for the DEMO
+# if __name__ == '__main__':
 
-    # if the `q` key was pressed, break from the loop
-	if key == ord("q"):
-        TerminateAll()
-        break
+#     SetCameraPosition()
+#     for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+#         #time.sleep(0.05)
+#         img_orig = frame.array
+#         terminate = ControlMain(img_orig)
+#         if(terminate):
+#             break
+#     key = cv2.waitKey(1) & 0xFF
+
+#     # clear the stream in preparation for the next frame
+# 	rawCapture.truncate(0)
+
+#     # if the `q` key was pressed, break from the loop
+# 	if key == ord("q"):
+#         TerminateAll()
+#         break

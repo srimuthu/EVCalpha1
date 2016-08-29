@@ -1,3 +1,14 @@
+#-------------------------------------------------------------------------------
+# Name:        Manual_control_2.py
+# Purpose:     Simple interface for manual control of robot
+#
+# Author:      Sri Muthu Narayanan Balasubramanian
+#
+# Created:     17-05-2016
+# Copyright:   (c) User 2016
+# Licence:     <your licence>
+#-------------------------------------------------------------------------------
+
 import getch
 import sys
 import ArduinoComm

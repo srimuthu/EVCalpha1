@@ -1,21 +1,10 @@
 #-------------------------------------------------------------------------------
-# Name:        module1
-# Purpose:
+# Name:        TrafficSignV3.py
+# Purpose:     Traffic sign detection module
 #
-# Author:      User
+# Author:      Sri Muthu Narayanan Balasubramanian
 #
-# Created:     05-06-2016
-# Copyright:   (c) User 2016
-# Licence:     <your licence>
-#-------------------------------------------------------------------------------
-
-#-------------------------------------------------------------------------------
-# Name:        TrafficSign.py
-# Purpose:
-#
-# Author:      User
-#
-# Created:     01-06-2016
+# Created:     17-05-2016
 # Copyright:   (c) User 2016
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------

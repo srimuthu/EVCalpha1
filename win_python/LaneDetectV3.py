@@ -1,13 +1,13 @@
-# -------------------------------------------------------------------------------
-# Name:        module1
-# Purpose:
+#-------------------------------------------------------------------------------
+# Name:        LaneDetectV3.py
+# Purpose:     Lane detection module
 #
-# Author:      User
+# Author:      Sri Muthu Narayanan Balasubramanian
 #
-# Created:     09-06-2016
+# Created:     17-05-2016
 # Copyright:   (c) User 2016
 # Licence:     <your licence>
-# -------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 
 from __future__ import division
 import numpy as np
@@ -16,7 +16,7 @@ import math, time
 from Error import *
 
 VISUALIZATION = True
-DEBUG = False
+DEBUG = True
 
 c_frames = 60
 c_roiFrameRatio = 0.6
