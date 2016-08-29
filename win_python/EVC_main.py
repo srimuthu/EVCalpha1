@@ -11,8 +11,8 @@
 from __future__ import division
 import time
 import cv2
-from LaneDetectV3 import LaneDetect
-from TrafficSignV3 import TrafficSign
+from LaneDetect import LaneDetect
+from TrafficSign import TrafficSign
 from ArduinoComm import ArduinoComm
 import datetime
 ##Picamera imports
