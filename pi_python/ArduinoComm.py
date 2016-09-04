@@ -21,9 +21,9 @@ cmdDict = {"NO_PENDING":0xfe,
             "REVERSE":0x03,
             "STOP":0x04,
             "ARC_LEFT":0x05,
-           "ARC_RIGHT":0x06,
-           "PAN_SERVO":0x07,
-           "TILT_SERVO":0x08}
+            "ARC_RIGHT":0x06,
+            "PAN_SERVO":0x07,
+            "TILT_SERVO":0x08}
 
 class ArduinoComm():
     def __init__(self, port=serPort, baud=9600):
@@ -66,20 +66,54 @@ class ArduinoComm():
 
         self.__TransmitMessage()
 
+    def ReceiveMessage(self):
+        self.__incomingMsg = ""
+        if self.__ser.inWaiting() > 0:
+            self.__incomingMsg = self.__ser.read(self.__ser.inWaiting())
+            return self.__incomingMsg
+        else:
+            return ""
 
 #testing purposes
 if __name__ == '__main__':
 
-    comm = ArduinoComm("/dev/ttyUSB0",9600)
-    #comm.SendMessage("BLINK_LED",[25,250,0,0])
-    #time.sleep(10)
-    comm.SendMessage("REVERSE",[210,100,1,0])
-    time.sleep(10)
-    comm.SendMessage("STOP",[0,0,0,0])
-    time.sleep(5)
-    comm.SendMessage("FORWARD",[210,100,1,0])
-    time.sleep(10)
-    comm.SendMessage("STOP",[0,0,0,0])
-    time.sleep(5)
+    comm = ArduinoComm("COM3",9600)
+    while True:
+        comm.ReceiveMessage()
+##    comm.SendMessage("BLINK_LED",[25,250,0,0])
+##    time.sleep(20)
+##    comm.SendMessage("REVERSE",[250,150,1,0])
+##    time.sleep(7)
+##    comm.SendMessage("STOP",[0,0,0,0])
+##    time.sleep(2)
+##    comm.SendMessage("FORWARD",[200,100,1,0])
+##    time.sleep(7)
+##    comm.SendMessage("STOP",[0,0,0,0])
+##    time.sleep(2)
+##    comm.SendMessage("ARC_TURN",[210,0,1,0])
+##    time.sleep(7)
+##    comm.SendMessage("ARC_TURN",[0,210,1,0])
+##    time.sleep(5)
+##    comm.SendMessage("STOP",[0,0,0,0])
+##    comm.SendMessage("PAN_SERVO",[50,0,0,0])
+##    time.sleep(5)
+##    comm.SendMessage("PAN_SERVO",[90,0,0,0])
+##    time.sleep(5)
+##    comm.SendMessage("PAN_SERVO",[45,0,0,0])
+##    time.sleep(5)
+##    comm.SendMessage("PAN_SERVO",[135,0,0,0])
+##    time.sleep(5)
+##    comm.SendMessage("PAN_SERVO",[90,0,0,0])
+##    time.sleep(5)
+##    comm.SendMessage("TILT_SERVO",[50,0,0,0])
+##    time.sleep(5)
+##    comm.SendMessage("TILT_SERVO",[90,0,0,0])
+##    time.sleep(5)
+##    comm.SendMessage("TILT_SERVO",[45,0,0,0])
+##    time.sleep(5)
+##    comm.SendMessage("TILT_SERVO",[135,0,0,0])
+##    time.sleep(5)
+##    comm.SendMessage("TILT_SERVO",[90,0,0,0])
+##    time.sleep(500)
     comm.Terminate()
 

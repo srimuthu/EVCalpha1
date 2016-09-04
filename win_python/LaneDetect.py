@@ -18,11 +18,14 @@ from Error import *
 VISUALIZATION = True
 DEBUG = True
 
+ADAPTIVE = True
+
+
 c_frames = 60
-c_roiFrameRatio = 0.6
+c_roiFrameRatio = 0.7
 c_bwThresh = 85
-c_minContourArea = 3000
-c_erosionIterations = 1
+c_minContourArea = 10000
+c_erosionIterations = 2
 
 ##Sensitivity of setpoint (smaller number is higher sensitivity)
 c_sensitivity = 0.4
@@ -31,7 +34,7 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 
 c_frameWidth = 800
 c_frameHeight = 600
-c_gaussianBlurTuple = (3, 3)
+c_gaussianBlurTuple = (5, 5)
 
 
 
@@ -64,7 +67,7 @@ class LaneDetect():
         # self.__imgGray = cv2.equalizeHist(self.__imgGray)
         self.__imgRoi = self.__imgGray[self.__ROI_y:self.__ROI_y + self.__ROI_h,
                         self.__ROI_x:self.__ROI_x + self.__ROI_w]
-        self.__imgRoi = cv2.medianBlur(self.__imgRoi, 3)
+        self.__imgRoi = cv2.medianBlur(self.__imgRoi, 5)
         self.__imgRoi = cv2.GaussianBlur(self.__imgRoi, c_gaussianBlurTuple, 0)
 
     def __RobotPath(self):
@@ -102,7 +105,10 @@ class LaneDetect():
         angle = 0
         length = 0
         area = 0
-        ret, thresh1 = cv2.threshold(self.__imgRoi, c_bwThresh, 255, cv2.THRESH_BINARY)
+        if not ADAPTIVE:
+            ret, thresh1 = cv2.threshold(self.__imgRoi, c_bwThresh, 255, cv2.THRESH_BINARY)
+        else:
+            thresh1 = cv2.adaptiveThreshold(self.__imgRoi,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,5,2)
         kernel = np.ones((3, 3), np.uint8)
         thresh1 = cv2.erode(thresh1, kernel, iterations=c_erosionIterations)
 
@@ -168,7 +174,7 @@ class LaneDetect():
 
 if __name__ == '__main__':
 
-    cap = cv2.VideoCapture("sat_2_93d.h264")
+    cap = cv2.VideoCapture("output.h264")
     print "video capture opening :", cap.isOpened()
     laneObj = LaneDetect()
     while (cap.isOpened()):
