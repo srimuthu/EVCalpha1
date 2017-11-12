@@ -35,8 +35,9 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 c_frameWidth = 800
 c_frameHeight = 600
 c_gaussianBlurTuple = (5, 5)
-
-
+c_medianBlurIndex = 3
+c_adaptive1 = 15
+c_adaptive2 = 2
 
 class LaneDetect():
     def __init__(self):
@@ -67,7 +68,7 @@ class LaneDetect():
         # self.__imgGray = cv2.equalizeHist(self.__imgGray)
         self.__imgRoi = self.__imgGray[self.__ROI_y:self.__ROI_y + self.__ROI_h,
                         self.__ROI_x:self.__ROI_x + self.__ROI_w]
-        self.__imgRoi = cv2.medianBlur(self.__imgRoi, 5)
+        self.__imgRoi = cv2.medianBlur(self.__imgRoi, c_medianBlurIndex)
         self.__imgRoi = cv2.GaussianBlur(self.__imgRoi, c_gaussianBlurTuple, 0)
 
     def __RobotPath(self):
@@ -108,7 +109,7 @@ class LaneDetect():
         if not ADAPTIVE:
             ret, thresh1 = cv2.threshold(self.__imgRoi, c_bwThresh, 255, cv2.THRESH_BINARY)
         else:
-            thresh1 = cv2.adaptiveThreshold(self.__imgRoi,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,5,2)
+            thresh1 = cv2.adaptiveThreshold(self.__imgRoi,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,c_adaptive1, c_adaptive2)
         kernel = np.ones((3, 3), np.uint8)
         thresh1 = cv2.erode(thresh1, kernel, iterations=c_erosionIterations)
 
@@ -168,13 +169,13 @@ class LaneDetect():
 
         if VISUALIZATION:
             self.__EstimateFPS()
-            cv2.imshow("TSD", self.__imgRoiColor)
+            cv2.imshow("LaneDetect", self.__imgRoiColor)
 
         return laneDetectOutput
 
 if __name__ == '__main__':
 
-    cap = cv2.VideoCapture("output.h264")
+    cap = cv2.VideoCapture("E:\Projects\EVC_dev\sat_2_93d.h264")
     print "video capture opening :", cap.isOpened()
     laneObj = LaneDetect()
     while (cap.isOpened()):

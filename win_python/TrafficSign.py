@@ -14,7 +14,7 @@ import numpy as np
 import cv2
 import math, time
 from Error import *
-from LaneDetectV3 import LaneDetect
+from LaneDetect import LaneDetect
 
 DEBUG = False
 VISUALIZATION = True
